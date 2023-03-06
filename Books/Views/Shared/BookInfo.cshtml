@@ -1,0 +1,25 @@
+﻿@{
+}
+
+@model Book
+<div class="card card-outline-primary m-1 p-1">
+    <div class="bg-faded p-1">
+        <h3>@Model.Title</h3>
+
+
+        <ul>
+            <li>By: @Model.Author</li>
+            <li>@Model.Category</li>
+            <li>Genre: @Model.Classification</li>
+            <li>Number of Pages: @Model.PageCount</li>
+            <li>@Model.Publisher</li>
+            <li>ISBN: @Model.Isbn</li>
+        </ul>
+        <span class="badge badge-pill badge-primary text-bg-dark" style="float:right">
+            <small>
+                $@Model.Price
+            </small>
+        </span>
+    </div>
+    <br />
+</div>
