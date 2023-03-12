@@ -1,6 +1,7 @@
 using Books.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -33,7 +34,9 @@ namespace Books
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddScoped<IBookstoreRepository, EFBookstoreRepository>();
-
+            services.AddScoped<IPurchaseRepository, EFPurchaseRepository>();
+            services.AddScoped<Cart>(x => SessionCart.GetCart(x));
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDistributedMemoryCache();
             services.AddSession();
         }
