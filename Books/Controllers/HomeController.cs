@@ -19,7 +19,7 @@ namespace Books.Controllers
         }
 
 
-        public IActionResult Index(int pageNum = 1)
+        public IActionResult Index(string bookCategory, int pageNum = 1)
         {
             // Sets number of books listed on each page
             int pageSize = 10;
@@ -28,6 +28,7 @@ namespace Books.Controllers
             {
                 // Uses Linq to query the database
                 Books = repo.Books
+                .Where(b => b.Category == bookCategory || bookCategory == null)
                 .OrderBy(b => b.Title)
                 .Skip((pageNum - 1) * pageSize)
                 .Take(pageSize),
@@ -35,7 +36,10 @@ namespace Books.Controllers
                 // Sets page info for the pagination
                 PageInfo = new PageInfo
                 {
-                    TotalNumBooks = repo.Books.Count(),
+                    TotalNumBooks = 
+                    (bookCategory == null
+                        ? repo.Books.Count()
+                        : repo.Books.Where(x => x.Category == bookCategory).Count()),
                     BooksPerPage = pageSize,
                     CurrentPage = pageNum
                 }

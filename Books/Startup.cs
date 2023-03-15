@@ -1,6 +1,7 @@
 using Books.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -33,6 +34,11 @@ namespace Books
             services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddScoped<IBookstoreRepository, EFBookstoreRepository>();
+            services.AddScoped<IPurchaseRepository, EFPurchaseRepository>();
+            services.AddScoped<Cart>(x => SessionCart.GetCart(x));
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddDistributedMemoryCache();
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,7 +57,7 @@ namespace Books
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseSession();
             app.UseRouting();
 
             app.UseAuthentication();
@@ -59,10 +65,20 @@ namespace Books
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute("typePage",
+                    "{bookCategory}/Page{pageNum}",
+                    new { Controller = "Home", action = "Index" });
+
                 endpoints.MapControllerRoute(
-                name: "Paging",
-                pattern: "Page{pageNum}",
-                defaults: new { Controller = "Home", action = "Index" });
+                    name: "Paging",
+                    pattern: "Page{pageNum}",
+                    defaults: new { Controller = "Home", action = "Index" });
+
+                endpoints.MapControllerRoute("typePage",
+                    "{bookCategory}",
+                    new { Controller = "Home", action = "Index", pageNum = 1});
+
+
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });
